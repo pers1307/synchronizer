@@ -1,5 +1,5 @@
 {
-  "name": "Durassell/synchronizer",
+  "name": "Durrasell/syncronizer",
   "type": "library",
   "description": "Composer package by Duras",
   "license": "MIT",
@@ -8,7 +8,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Durassell\\Synchronizer\\": "src/"
+      "Durrasell\\syncronizer\\": "src/"
     }
   }
 }
