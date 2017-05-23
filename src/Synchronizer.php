@@ -1,6 +1,6 @@
 <?php
 
-namespace Durrasell\Synchronizer;
+namespace Durrasell\synchronizer;
 
 class Synchronizer
 {

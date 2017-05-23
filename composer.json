@@ -1,6 +1,5 @@
 {
   "name": "Durrasell/syncronizer",
-  "type": "library",
   "description": "Composer package by Duras",
   "license": "MIT",
   "require": {
