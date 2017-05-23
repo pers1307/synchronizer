@@ -1,6 +1,7 @@
 {
   "name": "Durrasell/syncronizer",
   "description": "Composer package by Duras",
+  "homepage": "https://github.com/Durrasell/syncronizer",
   "license": "MIT",
   "require": {
     "php": ">=5.6.0"
