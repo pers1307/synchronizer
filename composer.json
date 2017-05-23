@@ -1,15 +1,15 @@
 {
-  "type": "package",
-  "package": {
-    "name": "Durrasell/syncronizer",
-    "version": "master",
-    "type": "plugin",
-    "source": {
-      "type": "vcs",
-      "url": "git@github.com:Durrasell/syncronizer.git"
-    },
-    "require" : {
-      "composer/installers": "v1.0.16"
+  "name": "Durrasell/syncronizer",
+  "description": "Composer package by Duras",
+  "version": "master",
+  "homepage": "https://github.com/Durrasell/syncronizer",
+  "dist": {
+    "url": "git@bitbucket.org:accountname/reponame.git",
+    "type": "vcs"
+  },
+  "autoload": {
+    "psr-4": {
+      "Durrasell\\syncronizer\\": "src/"
     }
   }
 }
