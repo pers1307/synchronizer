@@ -1,14 +1,11 @@
 {
   "name": "Durrasell/syncronizer",
   "description": "Composer package by Duras",
+  "version": "master",
   "homepage": "https://github.com/Durrasell/syncronizer",
-  "license": "MIT",
-  "require": {
-    "php": ">=5.6.0"
-  },
   "autoload": {
     "psr-4": {
-      "Durrasell\\syncronizer\\": "src/"
+      "Durrasell\\syncronizer\\": "src"
     }
   }
 }
