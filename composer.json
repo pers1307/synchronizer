@@ -3,13 +3,9 @@
   "description": "Composer package by Duras",
   "version": "master",
   "homepage": "https://github.com/Durrasell/syncronizer",
-  "dist": {
-    "url": "git@bitbucket.org:accountname/reponame.git",
-    "type": "vcs"
-  },
   "autoload": {
     "psr-4": {
-      "Durrasell\\syncronizer\\": "src/"
+      "Durrasell\\syncronizer\\": "src"
     }
   }
 }
