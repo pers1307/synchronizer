@@ -3,7 +3,7 @@
   "description": "Composer package by Duras",
   "homepage": "https://github.com/durrasell/synchronizer",
   "autoload": {
-    "psr-0": {
+    "psr-4": {
       "Durrasell\\Synchronizer": "src"
     }
   }
