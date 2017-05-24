@@ -4,7 +4,7 @@
   "version": "master",
   "homepage": "https://github.com/Durrasell/syncronizer",
   "autoload": {
-    "psr-4": {
+    "psr-0": {
       "Durrasell\\syncronizer\\": "src"
     }
   }
