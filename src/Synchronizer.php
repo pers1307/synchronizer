@@ -1,8 +1,8 @@
 <?php
 
-namespace Durrasell\syncronizer;
+namespace Durrasell\Synchronizer;
 
-class Synchronizer
+class Sync
 {
     public function hello()
     {
