@@ -55,10 +55,8 @@ class Synchronizer
         }
     }
 
-    public function sync()
+    private function getLocalArticles()
     {
-        $this->createLocalConnection();
-
         $command = $this->localConnection->prepare('
                   SELECT 
                     id,
@@ -76,23 +74,26 @@ class Synchronizer
                     `level`,
                     image     
                   FROM mp_equipment_articles');
+        $command->execute();
 
-        if ($command->execute()) {
-            foreach ($this->externalDb as $db) {
-                $this->createExternalConnection($db);
+        return $command;
+    }
 
-                while ($articleInfo = $command->fetch()) {
-                    $existRow = $this->externalConnection->prepare('
+    private function getExternalArticles($id)
+    {
+        $existRow = $this->externalConnection->prepare('
                                     SELECT 
                                     id
                                     FROM mp_equipment_articles
                                     WHERE id = ?');
-                    $existRow->execute([$articleInfo['id']]);
+        $existRow->execute([$id]);
 
-                    $res = $existRow->fetch();
+        return $existRow->fetch();
+    }
 
-                    if (!empty($res)) {
-                        $stmt = $this->externalConnection->prepare('
+    private function updateExternalArticles($articleInfo)
+    {
+        $stmt = $this->externalConnection->prepare('
                                     UPDATE 
                                       mp_equipment_articles
                                     SET
@@ -110,23 +111,26 @@ class Synchronizer
                                         level = :level,
                                         image = :image
                                     WHERE id = :id');
-                        $stmt->bindParam(':path_id', $articleInfo['path_id']);
-                        $stmt->bindParam(':parent', $articleInfo['parent']);
-                        $stmt->bindParam(':order', $articleInfo['order']);
-                        $stmt->bindParam(':name', $articleInfo['name']);
-                        $stmt->bindParam(':code', $articleInfo['code']);
-                        $stmt->bindParam(':text', $articleInfo['text']);
-                        $stmt->bindParam(':recomends', $articleInfo['recomends']);
-                        $stmt->bindParam(':visible', $articleInfo['visible']);
-                        $stmt->bindParam(':parents_visible', $articleInfo['parents_visible']);
-                        $stmt->bindParam(':lft', $articleInfo['lft']);
-                        $stmt->bindParam(':rgt', $articleInfo['rgt']);
-                        $stmt->bindParam(':level', $articleInfo['level']);
-                        $stmt->bindParam(':image', $articleInfo['image']);
-                        $stmt->bindParam(':id', $articleInfo['id']);
-                        $stmt->execute();
-                    } else {
-                        $stmt = $this->externalConnection->prepare('
+        $stmt->bindParam(':path_id', $articleInfo['path_id']);
+        $stmt->bindParam(':parent', $articleInfo['parent']);
+        $stmt->bindParam(':order', $articleInfo['order']);
+        $stmt->bindParam(':name', $articleInfo['name']);
+        $stmt->bindParam(':code', $articleInfo['code']);
+        $stmt->bindParam(':text', $articleInfo['text']);
+        $stmt->bindParam(':recomends', $articleInfo['recomends']);
+        $stmt->bindParam(':visible', $articleInfo['visible']);
+        $stmt->bindParam(':parents_visible', $articleInfo['parents_visible']);
+        $stmt->bindParam(':lft', $articleInfo['lft']);
+        $stmt->bindParam(':rgt', $articleInfo['rgt']);
+        $stmt->bindParam(':level', $articleInfo['level']);
+        $stmt->bindParam(':image', $articleInfo['image']);
+        $stmt->bindParam(':id', $articleInfo['id']);
+        $stmt->execute();
+    }
+
+    private function insertExternalArticle($articleInfo)
+    {
+        $stmt = $this->externalConnection->prepare('
                                     INSERT INTO 
                                     mp_equipment_articles
                                     (
@@ -162,25 +166,25 @@ class Synchronizer
                                         :level,
                                         :image 
                                     )');
-                        $stmt->bindParam(':id', $articleInfo['id']);
-                        $stmt->bindParam(':path_id', $articleInfo['path_id']);
-                        $stmt->bindParam(':parent', $articleInfo['parent']);
-                        $stmt->bindParam(':order', $articleInfo['order']);
-                        $stmt->bindParam(':name', $articleInfo['name']);
-                        $stmt->bindParam(':code', $articleInfo['code']);
-                        $stmt->bindParam(':text', $articleInfo['text']);
-                        $stmt->bindParam(':recomends', $articleInfo['recomends']);
-                        $stmt->bindParam(':visible', $articleInfo['visible']);
-                        $stmt->bindParam(':parents_visible', $articleInfo['parents_visible']);
-                        $stmt->bindParam(':lft', $articleInfo['lft']);
-                        $stmt->bindParam(':rgt', $articleInfo['rgt']);
-                        $stmt->bindParam(':level', $articleInfo['level']);
-                        $stmt->bindParam(':image', $articleInfo['image']);
-                        $stmt->execute();
-                    }
-                }
-            }
-        }
+        $stmt->bindParam(':id', $articleInfo['id']);
+        $stmt->bindParam(':path_id', $articleInfo['path_id']);
+        $stmt->bindParam(':parent', $articleInfo['parent']);
+        $stmt->bindParam(':order', $articleInfo['order']);
+        $stmt->bindParam(':name', $articleInfo['name']);
+        $stmt->bindParam(':code', $articleInfo['code']);
+        $stmt->bindParam(':text', $articleInfo['text']);
+        $stmt->bindParam(':recomends', $articleInfo['recomends']);
+        $stmt->bindParam(':visible', $articleInfo['visible']);
+        $stmt->bindParam(':parents_visible', $articleInfo['parents_visible']);
+        $stmt->bindParam(':lft', $articleInfo['lft']);
+        $stmt->bindParam(':rgt', $articleInfo['rgt']);
+        $stmt->bindParam(':level', $articleInfo['level']);
+        $stmt->bindParam(':image', $articleInfo['image']);
+        $stmt->execute();
+    }
+
+    private function getLocalProducts()
+    {
         $products = $this->localConnection->prepare('
                   SELECT 
                     id,
@@ -200,23 +204,24 @@ class Synchronizer
                     power,
                     date     
                   FROM mp_equipment_items');
-        if ($products->execute()) {
+        $products->execute();
+        return $products;
+    }
 
-            foreach ($this->externalDb as $db) {
-                $this->createExternalConnection($db);
-
-                while ($productInfo = $products->fetch()) {
-
-                    $existRow = $this->externalConnection->prepare('
+    private function getExternalProducts($id)
+    {
+        $existRow = $this->externalConnection->prepare('
                                     SELECT 
                                     id
                                     FROM mp_equipment_items
                                     WHERE id = ?');
-                    $existRow->execute([$productInfo['id']]);
-                    $res = $existRow->fetch();
-                  
-                    if (!empty($res)) {
-                        $stmt = $this->externalConnection->prepare('
+        $existRow->execute([$id]);
+        return $existRow->fetch();
+    }
+
+    private function updateExternalProducts($productInfo)
+    {
+        $stmt = $this->externalConnection->prepare('
                                     UPDATE 
                                       mp_equipment_items
                                     SET
@@ -236,25 +241,28 @@ class Synchronizer
                                         power = :power,
                                         date = :date    
                                     WHERE id = :id');
-                        $stmt->bindParam(':path_id', $productInfo['path_id']);
-                        $stmt->bindParam(':parent', $productInfo['parent']);
-                        $stmt->bindParam(':order', $productInfo['order']);
-                        $stmt->bindParam(':title', $productInfo['title']);
-                        $stmt->bindParam(':code', $productInfo['code']);
-                        $stmt->bindParam(':brand', $productInfo['brand']);
-                        $stmt->bindParam(':image', $productInfo['image']);
-                        $stmt->bindParam(':description', $productInfo['description']);
-                        $stmt->bindParam(':property', $productInfo['property']);
-                        $stmt->bindParam(':recomends', $productInfo['recomends']);
-                        $stmt->bindParam(':active', $productInfo['active']);
-                        $stmt->bindParam(':on_main', $productInfo['on_main']);
-                        $stmt->bindParam(':price', $productInfo['price']);
-                        $stmt->bindParam(':power', $productInfo['power']);
-                        $stmt->bindParam(':date', $productInfo['date']);
-                        $stmt->bindParam(':id', $productInfo['id']);
-                        $stmt->execute();
-                    } else {
-                        $stmt = $this->externalConnection->prepare('
+        $stmt->bindParam(':path_id', $productInfo['path_id']);
+        $stmt->bindParam(':parent', $productInfo['parent']);
+        $stmt->bindParam(':order', $productInfo['order']);
+        $stmt->bindParam(':title', $productInfo['title']);
+        $stmt->bindParam(':code', $productInfo['code']);
+        $stmt->bindParam(':brand', $productInfo['brand']);
+        $stmt->bindParam(':image', $productInfo['image']);
+        $stmt->bindParam(':description', $productInfo['description']);
+        $stmt->bindParam(':property', $productInfo['property']);
+        $stmt->bindParam(':recomends', $productInfo['recomends']);
+        $stmt->bindParam(':active', $productInfo['active']);
+        $stmt->bindParam(':on_main', $productInfo['on_main']);
+        $stmt->bindParam(':price', $productInfo['price']);
+        $stmt->bindParam(':power', $productInfo['power']);
+        $stmt->bindParam(':date', $productInfo['date']);
+        $stmt->bindParam(':id', $productInfo['id']);
+        $stmt->execute();
+    }
+
+    private function insertExternalProducts($productInfo)
+    {
+        $stmt = $this->externalConnection->prepare('
                                     INSERT INTO 
                                     mp_equipment_items
                                     (
@@ -294,23 +302,62 @@ class Synchronizer
                                         :power,
                                         :date   
                                     )');
-                        $stmt->bindParam(':id', $productInfo['id']);
-                        $stmt->bindParam(':path_id', $productInfo['path_id']);
-                        $stmt->bindParam(':parent', $productInfo['parent']);
-                        $stmt->bindParam(':order', $productInfo['order']);
-                        $stmt->bindParam(':title', $productInfo['title']);
-                        $stmt->bindParam(':code', $productInfo['code']);
-                        $stmt->bindParam(':brand', $productInfo['brand']);
-                        $stmt->bindParam(':image', $productInfo['image']);
-                        $stmt->bindParam(':description', $productInfo['description']);
-                        $stmt->bindParam(':property', $productInfo['property']);
-                        $stmt->bindParam(':recomends', $productInfo['recomends']);
-                        $stmt->bindParam(':active', $productInfo['active']);
-                        $stmt->bindParam(':on_main', $productInfo['on_main']);
-                        $stmt->bindParam(':price', $productInfo['price']);
-                        $stmt->bindParam(':power', $productInfo['power']);
-                        $stmt->bindParam(':date', $productInfo['date']);
-                        $stmt->execute();
+        $stmt->bindParam(':id', $productInfo['id']);
+        $stmt->bindParam(':path_id', $productInfo['path_id']);
+        $stmt->bindParam(':parent', $productInfo['parent']);
+        $stmt->bindParam(':order', $productInfo['order']);
+        $stmt->bindParam(':title', $productInfo['title']);
+        $stmt->bindParam(':code', $productInfo['code']);
+        $stmt->bindParam(':brand', $productInfo['brand']);
+        $stmt->bindParam(':image', $productInfo['image']);
+        $stmt->bindParam(':description', $productInfo['description']);
+        $stmt->bindParam(':property', $productInfo['property']);
+        $stmt->bindParam(':recomends', $productInfo['recomends']);
+        $stmt->bindParam(':active', $productInfo['active']);
+        $stmt->bindParam(':on_main', $productInfo['on_main']);
+        $stmt->bindParam(':price', $productInfo['price']);
+        $stmt->bindParam(':power', $productInfo['power']);
+        $stmt->bindParam(':date', $productInfo['date']);
+        $stmt->execute();
+    }
+
+    public function sync()
+    {
+        $this->createLocalConnection();
+
+        $command = $this->getLocalArticles();
+
+        if ($command) {
+
+            foreach ($this->externalDb as $db) {
+                $this->createExternalConnection($db);
+
+                while ($articleInfo = $command->fetch()) {
+                    $res = $this->getExternalArticles($articleInfo['id']);
+
+                    if (!empty($res)) {
+                        $this->updateExternalArticles($articleInfo);
+                    } else {
+                        $this->insertExternalArticle($articleInfo);
+                    }
+                }
+            }
+        }
+        $products = $this->getLocalProducts();
+
+        if ($products) {
+
+            foreach ($this->externalDb as $db) {
+                $this->createExternalConnection($db);
+
+                while ($productInfo = $products->fetch()) {
+
+                    $res = $this->getExternalProducts($productInfo['id']);
+                  
+                    if (!empty($res)) {
+                        $this->updateExternalProducts($productInfo);
+                    } else {
+                        $this->insertExternalProducts($productInfo);
                     }
                 }
             }
