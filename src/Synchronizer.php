@@ -40,6 +40,10 @@ class Synchronizer
             $this->localDb['pass']
         );
     }
+
+    /**
+     * @var array $db
+     */
     private function createExternalConnection($db)
     {
         try {
@@ -55,6 +59,9 @@ class Synchronizer
         }
     }
 
+    /**
+     * @return object
+     */
     private function getLocalArticles()
     {
         $command = $this->localConnection->prepare('
@@ -79,6 +86,11 @@ class Synchronizer
         return $command->fetchAll();
     }
 
+    /**
+     * @var integer $id
+     *
+     * @return object
+     */
     private function getExternalArticles($id)
     {
         $existRow = $this->externalConnection->prepare('
@@ -91,6 +103,10 @@ class Synchronizer
         return $existRow->fetch();
     }
 
+    /**
+     * @var array $articleInfo
+     *
+     */
     private function updateExternalArticles($articleInfo)
     {
         $stmt = $this->externalConnection->prepare('
@@ -128,6 +144,10 @@ class Synchronizer
         $stmt->execute();
     }
 
+    /**
+     * @var array $articleInfo
+     *
+     */
     private function insertExternalArticle($articleInfo)
     {
         $stmt = $this->externalConnection->prepare('
@@ -183,6 +203,10 @@ class Synchronizer
         $stmt->execute();
     }
 
+    /**
+     * @return object
+     *
+     */
     private function getLocalProducts()
     {
         $products = $this->localConnection->prepare('
@@ -208,6 +232,11 @@ class Synchronizer
         return $products->fetchAll();
     }
 
+    /**
+     * @var integer $id
+     *
+     * @return object
+     */
     private function getExternalProducts($id)
     {
         $existRow = $this->externalConnection->prepare('
@@ -219,6 +248,10 @@ class Synchronizer
         return $existRow->fetch();
     }
 
+    /**
+     * @var array $productInfo
+     *
+     */
     private function updateExternalProducts($productInfo)
     {
         $stmt = $this->externalConnection->prepare('
@@ -260,6 +293,10 @@ class Synchronizer
         $stmt->execute();
     }
 
+    /**
+     * @var array $productInfo
+     *
+     */
     private function insertExternalProducts($productInfo)
     {
         $stmt = $this->externalConnection->prepare('
@@ -321,6 +358,10 @@ class Synchronizer
         $stmt->execute();
     }
 
+    /**
+     * @var array $articles
+     *
+     */
     private function deleteExternalArticlesNotLocal($articles)
     {
         $localIds = array_column($articles, 'id');
@@ -341,6 +382,10 @@ class Synchronizer
         }
     }
 
+    /**
+     * @var array $products
+     *
+     */
     private function deleteExternalProductsNotLocal($products)
     {
         $localIds = array_column($products, 'id');
@@ -361,6 +406,10 @@ class Synchronizer
         }
     }
 
+    /**
+     * @var integer $id
+     *
+     */
     private function destroyExternalArticleRows($id)
     {
         $stmt = $this->externalConnection->prepare('
@@ -370,6 +419,10 @@ class Synchronizer
         $stmt->execute([$id]);
     }
 
+    /**
+     * @var integer $id
+     *
+     */
     private function destroyExternalProductRow($id)
     {
         $stmt = $this->externalConnection->prepare('
