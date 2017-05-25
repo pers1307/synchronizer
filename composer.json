@@ -1,10 +1,11 @@
 {
-  "name": "durrasell/synchronizer",
+  "name": "durrasell/syncronizer",
   "description": "Composer package by Duras",
-  "homepage": "https://github.com/durrasell/synchronizer",
+  "version": "master",
+  "homepage": "https://github.com/durrasell/syncronizer",
   "autoload": {
     "psr-4": {
-      "Durrasell\\Synchronizer\\": "src"
+      "Durrasell\\Syncronizer\\": "src"
     }
   }
 }
