@@ -76,7 +76,7 @@ class Synchronizer
                   FROM mp_equipment_articles');
         $command->execute();
 
-        return $command;
+        return $command->fetchAll();
     }
 
     private function getExternalArticles($id)
@@ -205,7 +205,7 @@ class Synchronizer
                     date     
                   FROM mp_equipment_items');
         $products->execute();
-        return $products;
+        return $products->fetchAll();
     }
 
     private function getExternalProducts($id)
@@ -321,18 +321,76 @@ class Synchronizer
         $stmt->execute();
     }
 
+    private function deleteExternalArticlesNotLocal($articles)
+    {
+        $localIds = array_column($articles, 'id');
+        $stmt = $this->externalConnection->prepare('
+                SELECT
+                  id
+                FROM
+                  mp_equipment_articles');
+        $stmt->execute();
+        $externalIds = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+        $idsToDelete = array_diff($externalIds, $localIds);
+
+        if (!empty($idsToDelete)) {
+
+            foreach ($idsToDelete as $id) {
+                $this->destroyExternalArticleRows($id);
+            }
+        }
+    }
+
+    private function deleteExternalProductsNotLocal($products)
+    {
+        $localIds = array_column($products, 'id');
+        $stmt = $this->externalConnection->prepare('
+                SELECT
+                  id
+                FROM
+                  mp_equipment_items');
+        $stmt->execute();
+        $externalIds = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+        $idsToDelete = array_diff($externalIds, $localIds);
+
+        if (!empty($idsToDelete)) {
+
+            foreach ($idsToDelete as $id) {
+                $this->destroyExternalProductRow($id);
+            }
+        }
+    }
+
+    private function destroyExternalArticleRows($id)
+    {
+        $stmt = $this->externalConnection->prepare('
+                DELETE FROM
+                  mp_equipment_articles
+                WHERE id = ?');
+        $stmt->execute([$id]);
+    }
+
+    private function destroyExternalProductRow($id)
+    {
+        $stmt = $this->externalConnection->prepare('
+                DELETE FROM
+                  mp_equipment_items
+                WHERE id = ?');
+        $stmt->execute([$id]);
+    }
+
     public function sync()
     {
         $this->createLocalConnection();
 
-        $command = $this->getLocalArticles();
+        $articles = $this->getLocalArticles();
 
-        if ($command) {
+        if ($articles) {
 
             foreach ($this->externalDb as $db) {
                 $this->createExternalConnection($db);
 
-                while ($articleInfo = $command->fetch()) {
+                foreach ($articles as $articleInfo) {
                     $res = $this->getExternalArticles($articleInfo['id']);
 
                     if (!empty($res)) {
@@ -341,6 +399,7 @@ class Synchronizer
                         $this->insertExternalArticle($articleInfo);
                     }
                 }
+                $this->deleteExternalArticlesNotLocal($articles);
             }
         }
         $products = $this->getLocalProducts();
@@ -350,7 +409,7 @@ class Synchronizer
             foreach ($this->externalDb as $db) {
                 $this->createExternalConnection($db);
 
-                while ($productInfo = $products->fetch()) {
+                foreach ($products as $productInfo) {
 
                     $res = $this->getExternalProducts($productInfo['id']);
                   
@@ -360,7 +419,9 @@ class Synchronizer
                         $this->insertExternalProducts($productInfo);
                     }
                 }
+                $this->deleteExternalProductsNotLocal($products);
             }
         };
+
     }
 }
