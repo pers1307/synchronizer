@@ -7,5 +7,10 @@
     "psr-4": {
       "Durrasell\\Syncronizer\\": "src"
     }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev": "1.0-dev"
+    }
   }
 }
