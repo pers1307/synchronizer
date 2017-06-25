@@ -1,6 +1,6 @@
 <?php
 
-namespace Duras\Synchronizer;
+namespace pers1307\synchronizer;
 
 
 class Synchronizer
