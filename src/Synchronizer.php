@@ -72,7 +72,6 @@ class Synchronizer
                     `order`,
                     `name`,
                     code,
-                    text,
                     recomends,
                     visible,
                     parents_visible,
@@ -118,7 +117,6 @@ class Synchronizer
                                         `order` = :order,
                                         `name` = :name,
                                         code = :code,
-                                        text = :text,
                                         recomends = :recomends,
                                         visible = :visible,
                                         parents_visible = :parents_visible,
@@ -132,7 +130,6 @@ class Synchronizer
         $stmt->bindParam(':order', $articleInfo['order']);
         $stmt->bindParam(':name', $articleInfo['name']);
         $stmt->bindParam(':code', $articleInfo['code']);
-        $stmt->bindParam(':text', $articleInfo['text']);
         $stmt->bindParam(':recomends', $articleInfo['recomends']);
         $stmt->bindParam(':visible', $articleInfo['visible']);
         $stmt->bindParam(':parents_visible', $articleInfo['parents_visible']);
@@ -160,7 +157,6 @@ class Synchronizer
                                         `order`,
                                         `name`,
                                         code,
-                                        text,
                                         recomends,
                                         visible,
                                         parents_visible,
@@ -177,7 +173,6 @@ class Synchronizer
                                         :order,
                                         :name,
                                         :code,
-                                        :text,
                                         :recomends,
                                         :visible,
                                         :parents_visible,
@@ -192,7 +187,6 @@ class Synchronizer
         $stmt->bindParam(':order', $articleInfo['order']);
         $stmt->bindParam(':name', $articleInfo['name']);
         $stmt->bindParam(':code', $articleInfo['code']);
-        $stmt->bindParam(':text', $articleInfo['text']);
         $stmt->bindParam(':recomends', $articleInfo['recomends']);
         $stmt->bindParam(':visible', $articleInfo['visible']);
         $stmt->bindParam(':parents_visible', $articleInfo['parents_visible']);
